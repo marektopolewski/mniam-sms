@@ -11,7 +11,8 @@ from huawei_lte_api.exceptions import ResponseErrorLoginRequiredException
 
 class Sender:
 
-    def __init__(self, backend_url : str):
+    def __init__(self, backend_url : str, router_password : str):
+        self._password = router_password
         self._client = self.make_client()
         self._queue = dict()
         self._scheduler = sched.scheduler(time.time, time.sleep)
@@ -20,12 +21,11 @@ class Sender:
     ############ CREATE A huawei_lte_api CLIENT ############
     def make_client(self):
         MODEM_CREDS_USERNAME = "admin"
-        MODEM_CREDS_PASSWORD = "xxxxxxx"
         MODEM_LOCAL_IP = "192.168.8.2"
 
         # establish a connection
         connection = AuthorizedConnection('http://{}:{}@{}/'.format(MODEM_CREDS_USERNAME,
-                                                                    MODEM_CREDS_PASSWORD,
+                                                                    self._password,
                                                                     MODEM_LOCAL_IP))
         # init the client
         return Client(connection)
@@ -80,4 +80,6 @@ class Sender:
         self._scheduler.run()
 
 if __name__ == "__main__":
-    Sender("http://localhost:3000/").serve()
+    url = sys.argv[1]
+    psw = sys.argv[2]
+    Sender(url, psw).serve()

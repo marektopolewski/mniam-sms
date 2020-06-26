@@ -12,4 +12,10 @@
 
 - Install python dependencies: `pip install -r requirements.txt.`
 
-- Start the service: `./server.py` (or `./server.py -` to run in the background)
+- Start the service: `./server.py <BACKEND_URL> <ROUTER_PSW>`
+  
+    * `BACKEND_URL` - URL address of the server SMS requests are fetched from and confirmed to.
+
+    * `ROUTER_PSW` - password of the `admin` user to authenticate with the router
+
+(You can also use a chron job, supervisor or simply `./server.py <BACKEND_URL> <ROUTER_PSW> -` to run in the background.)
