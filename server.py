@@ -32,6 +32,7 @@ class Sender:
 
     ############ WRAPPER FOR SEND SMS + SEND CONFIRMATION ############
     def handle_request(self, sms_id: str, phone_number: str, message: str):
+        print("[HANDLER] Sending message to {}".format(phone_number))
         try:
             err = self.send_sms([phone_number], message)
             self.confirm_sent(sms_id, not err)
@@ -52,14 +53,17 @@ class Sender:
         data = {'sms_id': sms_id,
                 'status': "OK" if sent else "ERR"}
         headers = {'content-type': 'application/json'}
-        r = requests.post(self._backend_url + "api/sms/update", headers=headers, data=json.dumps(data))
-        print(r.status_code, r.content)
+        try:
+            r = requests.post(self._backend_url + "/api/sms/update", headers=headers, data=json.dumps(data))
+            print("[HANDLER] Confimation sent, status code: {}".format(r.status_code))
+        except Exception as e:
+            print("[HANDLER] Confimation not sent. Exception{}".format(e))
 
     ############ CALLED EACH LOOP IT INVOCATION ############
     def _run(self, sc):
         try:
             # fetch list
-            r = requests.get(self._backend_url + "api/sms/fetch")
+            r = requests.get(self._backend_url + "/api/sms/fetch")
             try:
                 # decode and handle send requests
                 blob = r.json()
@@ -69,8 +73,8 @@ class Sender:
             except:
                 print("[LOOP] JSON error : could not decode.\n Code: {}\n Content: {}"
                     .format(r.status_code, r.content))
-        except:
-            print("[LOOP] Request error : could not get /api/sms/fetch")
+        except Exception as e:
+            print("[LOOP] Request error : could not get /api/sms/fetch\n{}".format(e))
         self._scheduler.enter(60, 1, self._run, (sc,))
 
     ############ STARTS THE INFINITE LOOP ############
