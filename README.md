@@ -12,6 +12,13 @@
 
 - Install python dependencies: `pip install -r requirements.txt.`
 
+- Ensure that the router is visible on the same network as the device you're running this script on
+
+- Amend the following constants in `server.py`:
+    ```
+    MODEM_CREDS_USERNAME = "admin" // your router's username here
+    MODEM_LOCAL_IP = "192.168.255.255" // your router's local IP address here
+    ```
 - Start the service: `./server.py <BACKEND_URL> <ROUTER_PSW>`
   
     * `BACKEND_URL` - URL address of the server SMS requests are fetched from and confirmed to.
